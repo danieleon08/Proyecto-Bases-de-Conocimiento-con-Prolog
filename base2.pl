@@ -1,33 +1,39 @@
 % ==============================
-% BASE DE CONOCIMIENTO: PACIENTES Y MEDICOS
+% BASE DE CONOCIMIENTO PACIENTES
 % ==============================
 
-% ---- Hechos: Pacientes ----
-paciente(p).
+% ----------- PACIENTES -----------
+paciente(p3).
 paciente(pedro).
 
-% ---- Hechos: Médicos ----
+% ----------- MEDICOS -------------
 medico(laura).
+medico(X) :- medico_turno(X).
 
-% ---- Hechos: Fiebre ----
+% ----------- MEDICOS EN TURNO ----
+medico_turno(t15).
+
+% ----------- DIAGNOSTICOS --------
+diagnostico(p4).
+
+% ----------- FIEBRE --------------
 fiebre(pedro).
 
-% ---- Hechos: Diagnóstico ----
-diagnostico(p).
-
-% ==============================
-% Reglas
-% ==============================
-
-% 1. Todo paciente que tiene fiebre presenta síntomas
+% ----------- SINTOMAS ------------
 sintoma(X) :- paciente(X), fiebre(X).
 
-% 2. Si un paciente tiene cáncer, entonces está en tratamiento
+% ----------- TRATAMIENTO ---------
 tratamiento(X) :- paciente(X), cancer(X).
 
-% 4. Si un paciente no tiene diagnóstico, entonces no es atendido por ningún medico
-%    (Se modela como: para ser atendido debe tener diagnóstico)
-no_atendido(X,Y) :- paciente(X), medico(Y), not(diagnostico(X)).
+% ----------- PRIORITARIOS --------
+prioritario(X) :- fiebre(X).
+prioritario(X) :- diagnostico(X).
 
-% 5. Todo medico atiende a un paciente que o tiene fiebre o tiene diagnóstico
-atiende(Y,X) :- medico(Y), paciente(X), (fiebre(X) ; diagnostico(X)).
+% ----------- ATIENDE -------------
+atiende(Y,X) :- medico(Y), diagnostico(X).
+atiende(Y,X) :- medico(Y), paciente(X), (fiebre(X); diagnostico(X)).
+atiende(Y,X) :- medico(Y), paciente(X).
+atiende(_,X) :- prioritario(X), paciente(X).
+
+% ----------- REGISTRADOS ---------
+registrado(X) :- atiende(_,X).
